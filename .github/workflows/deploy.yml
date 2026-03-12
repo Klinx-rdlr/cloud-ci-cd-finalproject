@@ -1,8 +1,8 @@
-name: CI - Build and Push to Docker Hub
+name: Build and Deploy
 
 on:
   push:
-    branches: [main] # Triggers every time you push to 'main'
+    branches: [main]
 
 jobs:
   build-and-push:
@@ -17,17 +17,38 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          # Replace 'your-username' with your actual Docker ID if you want to hardcode,
-          # or keep using the secret for flexibility.
           tags: ${{ secrets.DOCKER_USERNAME }}/chef-architect:latest
-          # This speeds up future builds
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            mkdir -p ~/chef-app
+            cd ~/chef-app
+
+            echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
+            echo "PORT=3000" >> .env
+
+            docker pull ${{ secrets.DOCKER_USERNAME }}/chef-architect:latest
+
+            docker stop chef-app || true
+            docker rm chef-app || true
+
+
+            docker run -d \
+              --name chef-app \
+              -p 80:3000 \
+              -e GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} \
+              ${{ secrets.DOCKER_USERNAME }}/chef-architect:latest
