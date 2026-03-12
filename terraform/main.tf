@@ -8,10 +8,10 @@ terraform {
 }
 
 provider "aws" {
-  region = "ap-southeast-1" # You can change this to your preferred region
+  region = "ap-southeast-1" 
 }
 
-# 1. Create a Security Group (The Firewall)
+# 1. Security Group 
 resource "aws_security_group" "web_sg" {
   name        = "intern-project-sg"
   description = "Allow SSH and Web traffic"
@@ -47,28 +47,36 @@ resource "aws_instance" "app_server" {
 
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
-  # PRO TIP: This script runs automatically when the server starts!
-  # It saves you 30 minutes of manual setup.
   user_data = <<-EOF
               #!/bin/bash
-              sudo apt update -y
-              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-              sudo apt install -y nodejs
-              sudo npm install -g pm2
+              # 1. Update and install Docker
+              sudo apt-get update -y
+              sudo apt-get install -y docker.io
+
+              # 2. Start Docker service
+              sudo systemctl start docker
+              sudo systemctl enable docker
+
+              # 3. ubuntu user permission to run Docker commands
+              sudo usermod -aG docker ubuntu
+
+              # 4. Application Directory
+              mkdir -p /home/ubuntu/chef-app
+              chown ubuntu:ubuntu /home/ubuntu/chef-app
               EOF
 
   tags = {
-    Name = "AI-Powered-Intern-Server"
+    Name = "AI-Chef-Server"
   }
 }
 
-# 3. Create an Elastic IP (Static IP)
+# 3. Elastic IP (Static IP)
 resource "aws_eip" "static_ip" {
   instance = aws_instance.app_server.id
   domain   = "vpc"
 }
 
-# 4. Output the IP so you can copy it easily
+# 4. Public IP 
 output "public_ip" {
   value = aws_eip.static_ip.public_ip
 }

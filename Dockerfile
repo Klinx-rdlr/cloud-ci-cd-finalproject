@@ -8,7 +8,7 @@ COPY . .
 # Stage 2: Production
 FROM node:22-alpine
 WORKDIR /app
-# Only copy necessary files from the builder
+
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/server.js ./

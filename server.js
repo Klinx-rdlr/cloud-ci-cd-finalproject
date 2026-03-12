@@ -15,24 +15,22 @@ app.post("/api/architect-meal", async (req, res) => {
   try {
     const { ingredients } = req.body;
 
-    // Correct Model ID for March 2026
-    const modelId = "gemini-2.5-flash"; // Or "gemini-2.5-flash" if available in your tier
+    // Correct Model ID 
+    const modelId = "gemini-2.5-flash"; 
 
     const result = await ai.models.generateContent({
       model: modelId,
-      // Note: In the new SDK, systemInstruction can be part of the main object or config
       systemInstruction:
         "You are a Michelin-star Chef. Create 3 recipes in valid JSON format based on the ingredients provided.",
       contents: [
         { role: "user", parts: [{ text: `Ingredients: ${ingredients}` }] },
       ],
       config: {
-        // Use 'config', not 'generationConfig'
         temperature: 0.7,
         responseMimeType: "application/json",
-        // The SDK specifically looks for 'responseSchema' or 'response_json_schema'
+       
         responseSchema: {
-          type: "OBJECT", // Use Uppercase for types in the GenAI SDK
+          type: "OBJECT", 
           properties: {
             pantry_summary: { type: "STRING" },
             recipes: {
@@ -64,15 +62,13 @@ app.post("/api/architect-meal", async (req, res) => {
       },
     });
 
-    // --- EXTRACTION ---
-    // In @google/genai, if a schema is provided, the result has a .parsed property
     if (result.parsed) {
       console.log("✅ Recipe Architecture Complete (Parsed).");
       return res.json(result.parsed);
     }
 
     // Fallback if parsing fails or result is structured differently
-    const text = result.text; // In the new SDK, .text is a property, not a function ()
+    const text = result.text; 
     if (!text) {
       throw new Error("The Chef didn't return any readable recipes.");
     }

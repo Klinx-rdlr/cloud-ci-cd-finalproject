@@ -28,7 +28,6 @@ function randomize() {
   document.getElementById("ingredients").value = selected.join(", ");
 }
 
-// ... keep pool and randomize() as they are ...
 
 async function generate() {
   const input = document.getElementById("ingredients").value;
