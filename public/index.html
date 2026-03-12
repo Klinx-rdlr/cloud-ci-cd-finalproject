@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Recipe Architect</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="hero">
+        <h1>🍳 Recipe Architect</h1>
+        <p>Enter your ingredients or use the randomizer for inspiration.</p>
+        <div style="margin-bottom: 15px">
+          <input
+            type="text"
+            id="ingredients"
+            placeholder="e.g. eggs, tomatoes, bread, cheese"
+          />
+        </div>
+        <div class="button-group">
+          <button onclick="generate()" class="btn-primary">Build Menu</button>
+          <button onclick="randomize()" class="btn-secondary">
+            🎲 Surprise Me
+          </button>
+        </div>
+      </div>
+
+      <div id="loader">👨‍🍳 Chef is analyzing your pantry...</div>
+      <p id="pantry-info" class="summary"></p>
+      <div id="output" class="recipe-grid"></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

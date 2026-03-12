@@ -1,0 +1,43 @@
+Gemini said
+This is a significant jump in complexity, but it’s exactly the kind of project that gets people hired. You are moving from a Static Site (just files) to a Dynamic Web App (a living process).
+
+Here is the roadmap for your 8-16 hour "Capstone Project."
+
+🗺️ The Master Roadmap: AI-Powered EC2 Deployment
+Phase 1: Infrastructure & AWS Prep (2-3 Hours)
+Provision EC2: Launch a t3.micro (Ubuntu 22.04).
+
+Security Groups: Open Port 22 (SSH) for you and GitHub, and Port 3000 (or 80) for the web.
+
+Elastic IP: Connect a static IP so your URL doesn't change every time the server restarts.
+
+SSH Handshake: Get your .pem key file and test the connection from your terminal.
+
+Phase 2: Server "Hardening" & Environment (2-3 Hours)
+Install Runtimes: Install Node.js (v20+) and npm on the Ubuntu instance.
+
+Process Management: Install PM2 (npm install -g pm2). This ensures if your app crashes, the server revives it instantly.
+
+GitHub Secrets: Save your EC2_HOST (IP), EC2_USERNAME (ubuntu), and EC2_SSH_KEY (the content of your .pem file) into GitHub.
+
+Phase 3: The "Intermediate" App Development (4-6 Hours)
+Backend (Express.js): Build a server that handles the Gemini API calls securely.
+
+The AI Feature: Create a tool that takes "Developer Notes" and uses Gemini to output "Professional Documentation."
+
+Frontend: A clean UI (Tailwind or simple CSS) to interact with your backend API.
+
+Phase 4: The CI/CD "Pipeline 2.0" (3-4 Hours)
+Build Job: GitHub Actions installs dependencies and runs tests.
+
+Deploy Job: Instead of "uploading," GitHub SSH's into your EC2.
+
+The Command Sequence: The Action tells the server:
+
+cd /app-folder
+
+git pull
+
+npm install
+
+pm2 restart app-name
