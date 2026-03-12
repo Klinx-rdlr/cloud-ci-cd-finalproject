@@ -46,9 +46,8 @@ jobs:
             docker stop chef-app || true
             docker rm chef-app || true
 
-
             docker run -d \
               --name chef-app \
               -p 80:3000 \
-              -e GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} \
+              --env-file /home/ubuntu/chef-app/.env \
               ${{ secrets.DOCKER_USERNAME }}/chef-architect:latest
